@@ -1,0 +1,4 @@
+<div class="card">
+    <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+    <p-button *ngIf="isLoggedIn()" label="Logout" styleClass="p-button-danger" (click)='logout()'></p-button>
+</div>

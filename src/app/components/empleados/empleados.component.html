@@ -1,0 +1,64 @@
+<div class="card">
+    <p-table [value]="empleados" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Desde {first} hasta {last} de {totalRecords} entradas">
+        <ng-template pTemplate="caption">
+            <div style="display: flex; justify-content: space-between;">
+                <h2>Empleados</h2>
+                <button pButton pRipple label="Añadir" class="p-button-success"></button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre de usuario</th>
+                <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+                <th pSortableColumn="apellidos">Apellidos<p-sortIcon field="apellidos"></p-sortIcon></th>
+                <th>Proyectos</th>
+                <th>Evaluacion 2023-[H1]</th>
+                <th>Evaluacion 2022-[H2]</th>
+                <th>Evaluacion 2022-[H1]</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-empleado>
+            <tr>
+                <td>{{ empleado.nombreUsuario }}</td>
+                <td>{{ empleado.nombre }}</td>
+                <td>{{ empleado.apellidos }}</td>
+                <td>
+                    <button type="button" (click)="showDialog(empleado.id)" pButton label="Ver"></button>
+                </td>
+                <td>{{ empleado.evaluaciones[0].nota }}</td>
+                <td *ngIf="empleado.evaluaciones.length>1 else elseBlock">{{ empleado.evaluaciones[1].nota }}</td>
+                <td *ngIf="empleado.evaluaciones.length>2 else elseBlock">{{ empleado.evaluaciones[2].nota }}</td>
+                <ng-template #elseBlock>
+                    <td></td> 
+                </ng-template>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<!-- DIALOGO PROYECTOS -->
+<p-dialog header="Proyectos" [resizable]="false" [modal]="true" [maximizable]="true" appendTo="body" [(visible)]="dialogVisible" [style]="{width: '75vw'}" [contentStyle]="{height: '370px'}">
+    <button pButton pRipple label="Añadir" class="p-button-success"></button>
+    <p-table [value]="proyectosEmpleado" [scrollable]="true" scrollHeight="flex" [tableStyle]="{'min-width': '50rem', 'margin-top': '20px'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Modificar</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-proyecto>
+            <tr>
+                <td>{{proyecto.nombre}}</td>
+                <td>{{proyecto.descripcion}}</td>
+                <td><p-button styleClass="p-button-info p-button-text"><span>&#10000;</span></p-button></td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Salir" class="p-button-text"></button>
+    </ng-template>
+</p-dialog>
