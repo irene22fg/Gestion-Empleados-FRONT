@@ -1,0 +1,19 @@
+@import '~primeicons/primeicons.css';
+
+span{
+    font-weight: bold;
+}
+
+.card{
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+
+.info{
+    padding-left: 20px;
+}
+
+.info div{
+    margin-top: 10px;
+}

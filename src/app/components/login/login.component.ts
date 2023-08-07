@@ -12,10 +12,10 @@ import { LoginService } from 'src/app/service/login.service';
 export class LoginComponent {
 
   form!: FormGroup;
+  mensaje: string = '';
 
   constructor(
     @Inject(FormBuilder) private formBuilder: FormBuilder,
-    //private http: HttpClient,
     @Inject(Router) private router: Router,
     private loginService: LoginService
   ) {}
@@ -33,19 +33,23 @@ export class LoginComponent {
         console.log(response)
         if(!localStorage.getItem("token")){
           localStorage.setItem("token", response.token)
-          if(!localStorage.getItem("roles")){
-            this.loginService.getUsuarioNombre(response.Username).subscribe(
-              (usuario:any) => {
-                let roles: string[] = [];
-                usuario.roles.forEach((rol: { rol: string; }) => { roles.push(rol.rol )})
-                localStorage.setItem("roles", JSON.stringify(roles))
-              }
-            )
+          if(!localStorage.getItem("Usuario")){
+            localStorage.setItem("usuario", response.Username)
+            if(!localStorage.getItem("roles")){
+              this.loginService.getUsuarioNombre(response.Username).subscribe(
+                (usuario:any) => {
+                  let roles: string[] = [];
+                  usuario.roles.forEach((rol: { rol: string; }) => { roles.push(rol.rol )})
+                  localStorage.setItem("roles", JSON.stringify(roles))
+                }
+              )
+            }
           }
         }
-        this.router.navigate(['/empleados']);
+        this.router.navigate(['/home']);
       },
       (error:any) => {
+        this.mensaje = 'Usuario inválido';
         console.error('Error al hacer login:', error);
       });
   }

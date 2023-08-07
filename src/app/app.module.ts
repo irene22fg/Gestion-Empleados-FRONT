@@ -10,6 +10,8 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
+import { CardModule } from 'primeng/card';
 
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,22 +20,22 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { HeaderComponent } from './components/header/header.component';
+import { LoggedGuard } from './guards/logged.guard';
+import { HomeComponent } from './components/home/home.component';
+import { EvaluacionesComponent } from './components/evaluaciones/evaluaciones.component';
+import { PanelModule } from 'primeng/panel';
+import { AdminGuard } from './guards/admin.guard';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/login', pathMatch: 'full'},
-  {path: 'login', component: LoginComponent},
-  {path: 'empleados', component: EmpleadosComponent, canActivate: [AuthGuard]},
+  {path: '', redirectTo: '/home', pathMatch: 'full'},
+  {path: 'login', component: LoginComponent, canActivate: [LoggedGuard]},
+  {path: 'empleados', component: EmpleadosComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {path: 'evaluaciones', component: EvaluacionesComponent, canActivate: [AuthGuard, AdminGuard]},
+  { path: '**', redirectTo: '/home' }
   /* {path: 'clientes/form', component: ClienteFormComponent, canActivate: [AuthGuard]},
-  {path: 'clientes/form/:id', component: ClienteFormComponent, canActivate: [AuthGuard]},
-  {path: 'facturas', component: FacturaComponent, canActivate: [AuthGuard]},
-  {path: 'facturas/detalles/:id', component: DetallesComponent, canActivate: [AuthGuard]},
-  {path: 'facturas/form', component: FacturaFormComponent, canActivate: [AuthGuard]},
-  {path: 'facturas/form/:id', component: FacturaFormComponent, canActivate: [AuthGuard]},
-  {path: 'articulos', component: ArticuloComponent, canActivate: [AuthGuard]},
-  {path: 'articulos/form', component: ArticuloFormComponent, canActivate: [AuthGuard]},
-  {path: 'articulos/form/:id', component: ArticuloFormComponent, canActivate: [AuthGuard]},
-  { path: '**', redirectTo: '/home' } */
+  {path: 'clientes/form/:id', component: ClienteFormComponent, canActivate: [AuthGuard]}, */
 ];
 
 @NgModule({
@@ -42,7 +44,9 @@ const routes: Routes = [
     EmpleadosComponent,
     UsuariosComponent,
     LoginComponent,
-    HeaderComponent
+    HeaderComponent,
+    HomeComponent,
+    EvaluacionesComponent
   ],
   imports: [
     BrowserModule,
@@ -55,6 +59,9 @@ const routes: Routes = [
     BrowserAnimationsModule,
     TabMenuModule,
     DialogModule,
+    DividerModule,
+    PanelModule,
+    CardModule,
   ],
   providers: [ 
     {

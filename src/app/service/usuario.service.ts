@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Empleado } from '../model/Empleado.interface';
+import { Empleado } from '../model/Empleado';
 import { HttpClient } from '@angular/common/http';
 import { Usuario } from '../model/Usuario.interface';
 

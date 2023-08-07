@@ -1,4 +1,4 @@
-import { Empleado } from "./Empleado.interface";
+import { Empleado } from "./Empleado";
 import { Rol } from "./Rol.interface";
 
 export interface Usuario {

@@ -1,0 +1,36 @@
+<div class="card">
+    <div class="card-body">
+        <h2>Asignar evaluación</h2>
+        <form #evaluacionForm="ngForm">
+                <div class="form-gorup-row">
+                    <label for="cliente" class="col-form-label col-sm-2">Empleado</label>
+                    <div class="col-sm-6">
+                        <select [(ngModel)]="selectedEmpleado" [ngModelOptions]="{standalone: true}" name="empleado"
+                            #empleado="ngModel" required style="width: 280px;">
+                            <option *ngFor="let empleado of empleados" [value]="empleado.id">{{ empleado.nombre }}</option>
+                        </select>
+                        <div class="alert alert-danger" *ngIf="empleado.errors?.['required']">
+                                Elija un empleado
+                        </div>
+                    </div>
+                </div>
+                <div class="form-gorup-row">
+                    <label for="cliente" class="col-form-label col-sm-2">Nota</label>
+                    <div class="col-sm-6">
+                        <select [(ngModel)]="selectedNota" [ngModelOptions]="{standalone: true}" name="nota"
+                            #nota="ngModel" required style="width: 280px;">
+                            <option *ngFor="let nota of notas" [value]="nota">{{ nota }}</option>
+                        </select>
+                        <div class="alert alert-danger" *ngIf="nota.errors?.['required']">
+                                Asigne una nota
+                        </div>
+                    </div>
+                </div>
+            <div class="form-group-row">
+                <div class="col-sm-6">
+                    <button class="btn btn-primary mx-2 mt-3" role="button" (click)='create()' [disabled]="!selectedEmpleado || !selectedNota">Asignar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

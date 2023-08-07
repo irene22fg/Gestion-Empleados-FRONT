@@ -4,11 +4,16 @@
 
     <div class="mb-3">
       <label>Nombre de usuario</label>
-      <input formControlName="nombre" type="nombre" class="form-control" placeholder="fulanito">
+      <input formControlName="nombre" type="text" class="form-control" pInputText pTooltip="Inserte nombre de usuario" tooltipPosition="right" placeholder="fulanito">
     </div>
+    
     <div class="mb-3">
       <label>Contraseña</label>
-      <input formControlName="contrasena" type="contrasena" class="form-control" placeholder="Contraseña">
+      <input formControlName="contrasena" type="password" class="form-control" pInputText pTooltip="Inserte contraseña" tooltipPosition="right" placeholder="contraseña">
+    </div>
+
+    <div *ngIf="mensaje.length > 1" class="alert alert-danger">
+      <div>{{ mensaje }}</div>
     </div>
 
     <div class="d-grid">

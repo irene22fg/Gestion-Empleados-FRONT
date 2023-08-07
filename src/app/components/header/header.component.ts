@@ -11,18 +11,23 @@ export class HeaderComponent {
 
   constructor( private loginService: LoginService, private router: Router){}
 
-  items: any[] = [];
-  activeItem: any;
   isLogged: boolean = false;
+  //isAdminB: boolean = false;
+  roles: any; 
 
   ngOnInit() {
-    this.items = [
-      { label: 'Home', icon: 'pi pi-fw pi-home' },
-      { label: 'Empleados', icon: 'pi pi-fw pi-users' },
-      { label: 'Evaluaciones', icon: 'pi pi-fw pi-pencil' },
-    ];
-    this.activeItem = this.items[0];
     this.isLogged = this.isLoggedIn();
+    this.isAdmin();
+  }
+
+  isAdmin(){
+    this.roles = localStorage.getItem("roles");
+    this.roles = JSON.parse(this.roles);
+    if(this.roles.includes("ADMIN")){
+      return true;
+    } else{
+      return false;
+    }
   }
 
   isLoggedIn(){
@@ -38,6 +43,7 @@ export class HeaderComponent {
       this.isLogged = false;
       localStorage.removeItem('token');
       localStorage.removeItem('roles');
+      localStorage.removeItem('usuario')
       this.router.navigate(['/login'])
     }
   }

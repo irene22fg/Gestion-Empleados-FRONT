@@ -5,7 +5,8 @@
         <ng-template pTemplate="caption">
             <div style="display: flex; justify-content: space-between;">
                 <h2>Empleados</h2>
-                <button pButton pRipple label="Añadir" class="p-button-success"></button>
+                <button pButton pRipple class="p-button-success" (click)="showDialogEmpleado(0)"><i
+                        class="pi pi-plus mr-2"></i></button>
             </div>
         </ng-template>
         <ng-template pTemplate="header">
@@ -17,6 +18,8 @@
                 <th>Evaluacion 2023-[H1]</th>
                 <th>Evaluacion 2022-[H2]</th>
                 <th>Evaluacion 2022-[H1]</th>
+                <th>Modificar</th>
+                <th>Eliminar</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-empleado>
@@ -25,14 +28,19 @@
                 <td>{{ empleado.nombre }}</td>
                 <td>{{ empleado.apellidos }}</td>
                 <td>
-                    <button type="button" (click)="showDialog(empleado.id)" pButton label="Ver"></button>
+                    <button type="button" (click)="showDialogProyecto(empleado.id)" pButton><i
+                            class="pi pi-file mr-2"></i></button>
                 </td>
-                <td>{{ empleado.evaluaciones[0].nota }}</td>
+                <td *ngIf="empleado.evaluaciones.length>0 else elseBlock">{{ empleado.evaluaciones[0].nota }}</td>
                 <td *ngIf="empleado.evaluaciones.length>1 else elseBlock">{{ empleado.evaluaciones[1].nota }}</td>
                 <td *ngIf="empleado.evaluaciones.length>2 else elseBlock">{{ empleado.evaluaciones[2].nota }}</td>
                 <ng-template #elseBlock>
-                    <td></td> 
+                    <td></td>
                 </ng-template>
+                <td><p-button styleClass="p-button-info p-button-text" (click)="showDialogEmpleado(empleado.id)"><i
+                            class="pi pi-pencil mr-2"></i></p-button></td>
+                <td><p-button styleClass="p-button-danger p-button-text" (click)="delete(empleado.id)"><i class="pi pi-times mr-2"></i></p-button>
+                </td>
             </tr>
         </ng-template>
     </p-table>
@@ -40,25 +48,118 @@
 
 
 <!-- DIALOGO PROYECTOS -->
-<p-dialog header="Proyectos" [resizable]="false" [modal]="true" [maximizable]="true" appendTo="body" [(visible)]="dialogVisible" [style]="{width: '75vw'}" [contentStyle]="{height: '370px'}">
-    <button pButton pRipple label="Añadir" class="p-button-success"></button>
-    <p-table [value]="proyectosEmpleado" [scrollable]="true" scrollHeight="flex" [tableStyle]="{'min-width': '50rem', 'margin-top': '20px'}">
+<p-dialog header="Proyectos" [resizable]="false" [modal]="true" [maximizable]="true" appendTo="body"
+    [(visible)]="dialogProyectoVisible" [style]="{width: '75vw'}" [contentStyle]="{height: '370px'}">
+    <button pButton pRipple class="p-button-success" (click)='showDialogAsignarEmpleado(selectedEmpleado)'><i class="pi pi-plus mr-2"></i></button>
+    <div *ngIf="proyectosEmpleado.length >=1  else elseBlockProyectos">
+        <p-table [value]="proyectosEmpleado" [scrollable]="true" scrollHeight="flex"
+        [tableStyle]="{'min-width': '50rem', 'margin-top': '20px'}">
         <ng-template pTemplate="header">
             <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Modificar</th>
+                <th>Eliminar</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-proyecto>
             <tr>
                 <td>{{proyecto.nombre}}</td>
                 <td>{{proyecto.descripcion}}</td>
-                <td><p-button styleClass="p-button-info p-button-text"><span>&#10000;</span></p-button></td>
+                <td><p-button styleClass="p-button-info p-button-text"><i class="pi pi-pencil mr-2"></i></p-button></td>
+                <td><p-button styleClass="p-button-danger p-button-text" (click)="deleteProyecto(proyecto.id)"><i class="pi pi-times mr-2"></i></p-button>
+                </td>
             </tr>
         </ng-template>
     </p-table>
+    </div>
+    <ng-template #elseBlockProyectos>
+        <h2 style="text-align: center;">Sin proyectos asignados</h2>
+    </ng-template>
     <ng-template pTemplate="footer">
-        <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Salir" class="p-button-text"></button>
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogProyectoVisible=false" label="Salir"
+            class="p-button-text"></button>
+    </ng-template>
+</p-dialog>
+
+
+<!-- DIALOGO CREAR/MODIFICAR EMPLEADO -->
+<p-dialog header='{{tittle}}' [resizable]="false" [modal]="true" [maximizable]="true" appendTo="body"
+    [(visible)]="dialogEmpleadoVisible" [style]="{width: '40vw'}" [contentStyle]="{height: '370px'}">
+    <div class="card-body">
+        <form #empleadoForm="ngForm">
+            <div class="form-gorup-row">
+                <label for="nombre" class="col-form-label col-sm-2">Nombre</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" [(ngModel)]="empleado.nombre" name="nombre"
+                        #nombre="ngModel" required minlength="4">
+                    <div class="alert alert-danger" *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+                        <div *ngIf="nombre.errors?.['required']">
+                            Nombre es requerido
+                        </div>
+                        <div *ngIf="nombre.errors?.['minlength']">
+                            Nombre debe tener al menos 4 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-gorup-row">
+                <label for="apellido" class="col-form-label col-sm-2">Apellido</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" [(ngModel)]="empleado.apellidos" name="apellido"
+                        #apellido="ngModel" required>
+                    <div class="alert alert-danger" *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)">
+                        <div *ngIf="apellido.errors?.['required']">
+                            Apellido es requerido
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-row">
+                <div class="col-sm-6">
+                    <button class="btn btn-primary mx-2 mt-3" role="button" (click)='create()' *ngIf="!empleado.id else elseBlock" [disabled]="!empleadoForm.form.valid">Crear</button>
+                    <ng-template #elseBlock>
+                        <button class="btn btn-primary mx-2 mt-3" role="button" (click)='update()' [disabled]="!empleadoForm.form.valid">Guardar</button>
+                    </ng-template>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogEmpleadoVisible=false" label="Salir"
+            class="p-button-text"></button>
+    </ng-template>
+</p-dialog>
+
+
+<!-- DIALOGO CREAR/MODIFICAR Proyecto -->
+<p-dialog header='Asignar proyecto' [resizable]="false" [modal]="true" [maximizable]="true" appendTo="body"
+    [(visible)]="dialogAsignarProyectoVisible" [style]="{width: '40vw'}" [contentStyle]="{height: '370px'}">
+    <div class="card-body">
+        <form #proyectoForm="ngForm">
+                <div class="form-gorup-row">
+                    <label for="cliente" class="col-form-label col-sm-2">Proyecto</label>
+                    <div class="col-sm-6">
+                        <select [(ngModel)]="selectedProyecto" [ngModelOptions]="{standalone: true}" name="proyecto"
+                            #cliente="ngModel" required style="width: 280px;">
+                            <option *ngFor="let proyecto of proyectosElegir" [value]="proyecto.id">{{ proyecto.nombre }}</option>
+                        </select>
+                        <div class="alert alert-danger" *ngIf="cliente.errors?.['required']">
+                                Elija un proyecto
+                        </div>
+                    </div>
+                </div>
+            <div class="form-group-row">
+                <div class="col-sm-6">
+                    <button class="btn btn-primary mx-2 mt-3" role="button" (click)='updateEmpleado()' [disabled]="!selectedProyecto">Asignar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogAsignarProyectoVisible=false" label="Salir"
+            class="p-button-text"></button>
     </ng-template>
 </p-dialog>
